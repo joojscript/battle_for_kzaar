@@ -9,6 +9,7 @@ const cellGap = 3;
 let numberOfResources = 300;
 let enemiesInterval = 600;
 let enemiesHard = 50;
+let level = 1;
 let frame = 0;
 let gameOver = false;
 let score = 0;
@@ -156,10 +157,13 @@ function handleProjectiles() {
 }
 
 // defenders
-const defender1 = new Image();
-defender1.src = './assets/defender1.png';
-const defender2 = new Image();
-defender2.src = './assets/defender2.png';
+const defenderTypes = [];
+const defender1 = { health: 100, image: new Image(), price: 100, power: 20 };
+defender1.image.src = './assets/defender1.png';
+defenderTypes.push(defender1);
+const defender2 = { health: 150, image: new Image(), price: 150, power: 40 };
+defender2.image.src = './assets/defender2.png';
+defenderTypes.push(defender2);
 
 class Defender {
   constructor(x, y) {
@@ -169,7 +173,8 @@ class Defender {
     this.height = cellSize - cellGap * 2;
     this.shooting = false;
     this.shootingNow = false;
-    this.health = 100;
+    this.chosenDefender = chosenDefender;
+    this.health = defenderTypes[chosenDefender - 1].health;
     this.timer = 0;
     this.frameX = 0;
     this.frameY = 0;
@@ -177,7 +182,6 @@ class Defender {
     this.spriteHeight = 120;
     this.minFrame = 0;
     this.maxFrame = 20;
-    this.chosenDefender = chosenDefender;
   }
   draw() {
     // ctx.fillStyle = "blue";
@@ -185,32 +189,17 @@ class Defender {
     ctx.fillStyle = 'black';
     ctx.font = '15px Orbitron';
     ctx.fillText(Math.floor(this.health), this.x + 14, this.y + 10);
-
-    if (this.chosenDefender === 1) {
-      ctx.drawImage(
-        defender1,
-        this.frameX * this.spriteWidth,
-        0,
-        this.spriteWidth,
-        this.spriteHeight,
-        this.x,
-        this.y,
-        this.spriteWidth / 1.3,
-        this.spriteHeight / 1.3
-      );
-    } else if (this.chosenDefender === 2) {
-      ctx.drawImage(
-        defender2,
-        this.frameX * this.spriteWidth,
-        0,
-        this.spriteWidth,
-        this.spriteHeight,
-        this.x,
-        this.y,
-        this.spriteWidth / 1.3,
-        this.spriteHeight / 1.3
-      );
-    }
+    ctx.drawImage(
+      defenderTypes[this.chosenDefender - 1].image,
+      this.frameX * this.spriteWidth,
+      0,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x,
+      this.y,
+      this.spriteWidth / 1.3,
+      this.spriteHeight / 1.3
+    );
   }
   update() {
     if (frame % 5 === 0) {
@@ -264,7 +253,7 @@ const card1 = {
 };
 
 const card2 = {
-  x: 790,
+  x: 800,
   y: 5,
   width: 70,
   height: 85,
@@ -296,10 +285,10 @@ function chooseDefender() {
   ctx.fillRect(card1.x, card1.y, card1.width, card1.height);
   ctx.strokeStyle = card1Stroke;
   ctx.strokeRect(card1.x, card1.y, card1.width, card1.height);
-  ctx.drawImage(defender1, 0, 0, 150, 120, 706, -5, 115, 92);
+  ctx.drawImage(defender1.image, 0, 0, 150, 120, 706, -5, 115, 92);
 
   ctx.fillRect(card2.x, card2.y, card2.width, card2.height);
-  ctx.drawImage(defender2, 0, 0, 150, 120, 790, -5, 115, 92);
+  ctx.drawImage(defender2.image, 0, 0, 150, 120, 790, -5, 115, 92);
   ctx.strokeStyle = card2Stroke;
   ctx.strokeRect(card2.x, card2.y, card2.width, card2.height);
 }
@@ -429,14 +418,14 @@ function handleModalNextLevel() {
 
 // enemies
 const enemyTypes = [];
-const enemy1 = new Image();
-enemy1.src = './assets/enemy1.png';
+const enemy1 = { health: 100, image: new Image() };
+enemy1.image.src = './assets/enemy1.png';
 enemyTypes.push(enemy1);
-const enemy2 = new Image();
-enemy2.src = './assets/enemy2.png';
+const enemy2 = { health: 120, image: new Image() };
+enemy2.image.src = './assets/enemy2.png';
 enemyTypes.push(enemy2);
-const enemy3 = new Image();
-enemy3.src = './assets/enemy3.png';
+const enemy3 = { health: 140, image: new Image() };
+enemy3.image.src = './assets/enemy3.png';
 enemyTypes.push(enemy3);
 
 class Enemy {
@@ -447,9 +436,9 @@ class Enemy {
     this.height = cellSize - cellGap * 2;
     this.speed = Math.random() * 0.2 + 0.4;
     this.movement = this.speed;
-    this.health = 100;
-    this.maxHealth = this.health;
     this.enemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+    this.health = this.enemyType.health;
+    this.maxHealth = this.health;
     this.frameX = 0;
     this.frameY = 0;
     this.minFrame = 0;
@@ -472,7 +461,7 @@ class Enemy {
     ctx.fillText(Math.floor(this.health), this.x + 9, this.y + 9);
     // ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dy);
     ctx.drawImage(
-      this.enemyType,
+      this.enemyType.image,
       this.frameX * this.spriteWidth,
       0,
       this.spriteWidth,
@@ -512,6 +501,9 @@ function handleEnemies() {
       enemyPositions.splice(findThisIndex, 1);
       enemies.splice(i, 1);
       i--;
+      if (score >= winningScore && enemies.length === 0) {
+        level++;
+      }
     }
   }
 
@@ -602,13 +594,14 @@ function handleResources() {
 
 function handleGameStatus() {
   ctx.fillStyle = 'gold';
-  ctx.font = '30px Orbitron';
-  ctx.fillText('Score: ' + score, 20, 40);
+  ctx.font = '20px Orbitron';
+  ctx.fillText('Level: ' + level, 20, 20);
+  ctx.fillText('Score: ' + score, 20, 50);
   ctx.fillText('Resources: ' + numberOfResources, 20, 80);
   if (gameOver) {
     ctx.fillStyle = 'gold';
     ctx.font = '90px Orbitron';
-    ctx.fillText('Game Over', 175, 250);
+    ctx.fillText('Game Over', 250, 350);
   }
   if (score >= winningScore && enemies.length === 0) {
     // ctx.fillStyle = "gold";
@@ -628,13 +621,22 @@ canvas.addEventListener('click', function () {
     if (defenders[i].x === gridPositionX && defenders[i].y === gridPositionY)
       return;
   }
-  let defenderCost = 100;
+  const defenderCost = defenderTypes[chosenDefender - 1].price;
   if (
     numberOfResources >= defenderCost &&
     startNext === false &&
     levelNext === false
   ) {
     defenders.push(new Defender(gridPositionX, gridPositionY));
+    floatingMessages.push(
+      new FloatingMessage(
+        '-' + defenderCost,
+        gridPositionX,
+        gridPositionY + 100,
+        20,
+        'red'
+      )
+    );
     numberOfResources -= defenderCost;
   } else if (startNext === false && levelNext === false) {
     floatingMessages.push(
