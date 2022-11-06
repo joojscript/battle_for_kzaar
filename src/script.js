@@ -449,8 +449,6 @@ class Enemy {
     this.maxFrame = 5;
     this.spriteWidth = 173;
     this.spriteHeight = 130;
-    // this.spriteWidth = 60;
-    // this.spriteHeight = 130;
   }
   update() {
     this.x -= this.movement;
