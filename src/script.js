@@ -418,15 +418,18 @@ function handleModalNextLevel() {
 
 // enemies
 const enemyTypes = [];
+
 const enemy1 = { health: 100, image: new Image() };
-enemy1.image.src = './assets/enemy1.png';
+enemy1.image.src = './assets/troll-3-walking.png';
 enemyTypes.push(enemy1);
-const enemy2 = { health: 120, image: new Image() };
-enemy2.image.src = './assets/enemy2.png';
-enemyTypes.push(enemy2);
-const enemy3 = { health: 140, image: new Image() };
-enemy3.image.src = './assets/enemy3.png';
-enemyTypes.push(enemy3);
+
+// const enemy2 = { health: 120, image: new Image() };
+// enemy2.image.src = './assets/enemy2.png';
+// enemyTypes.push(enemy2);
+
+// const enemy3 = { health: 140, image: new Image() };
+// enemy3.image.src = './assets/enemy3.png';
+// enemyTypes.push(enemy3);
 
 class Enemy {
   constructor(verticalPosition) {
@@ -443,8 +446,10 @@ class Enemy {
     this.frameY = 0;
     this.minFrame = 0;
     this.maxFrame = 5;
-    this.spriteWidth = 60;
+    this.spriteWidth = 173;
     this.spriteHeight = 130;
+    // this.spriteWidth = 60;
+    // this.spriteHeight = 130;
   }
   update() {
     this.x -= this.movement;
