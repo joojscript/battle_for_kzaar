@@ -417,16 +417,20 @@ function handleModalNextLevel() {
 }
 
 // enemies
-const enemyTypes = [];
-const enemy1 = { health: 100, image: new Image() };
-enemy1.image.src = './assets/enemy1.png';
-enemyTypes.push(enemy1);
-const enemy2 = { health: 120, image: new Image() };
-enemy2.image.src = './assets/enemy2.png';
-enemyTypes.push(enemy2);
-const enemy3 = { health: 140, image: new Image() };
-enemy3.image.src = './assets/enemy3.png';
-enemyTypes.push(enemy3);
+const makeEnemy = ({ health, imageSrc }) => {
+  const e = { health, image: new Image() };
+  e.image.src = imageSrc;
+  return e;
+}
+
+const enemyTypes = [
+  makeEnemy({ health: 100, imageSrc: './assets/orc-1-walking.png' }),
+  makeEnemy({ health: 140, imageSrc: './assets/orc-2-walking.png' }),
+  makeEnemy({ health: 180, imageSrc: './assets/orc-3-walking.png' }),
+  makeEnemy({ health: 100, imageSrc: './assets/troll-1-walking.png' }),
+  makeEnemy({ health: 160, imageSrc: './assets/troll-2-walking.png' }),
+  makeEnemy({ health: 200, imageSrc: './assets/troll-3-walking.png' }),
+];
 
 class Enemy {
   constructor(verticalPosition) {
@@ -443,7 +447,7 @@ class Enemy {
     this.frameY = 0;
     this.minFrame = 0;
     this.maxFrame = 5;
-    this.spriteWidth = 60;
+    this.spriteWidth = 173;
     this.spriteHeight = 130;
   }
   update() {
